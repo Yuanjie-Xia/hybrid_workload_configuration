@@ -1,0 +1,80 @@
+Subject System,Workload Identifier,Reference
+jump3r,sweep,(self-generated sine sweep of 30 seconds length)
+jump3r,single-channel,Original WAVE version of the song “Stereo Wow” by artist “Slava”. 
+jump3r,dual-channel,The single-channel variant was created by merging the channels from "dual-channel".
+jump3r,helix,"https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3 
+
+Transformed into WAVE audio format"
+jump3r,sintel,"https://media.xiph.org/sintel/sintel-master-st.flac 
+
+Audio channel of the sintel trailer, transformed into WAV from FLAC (lossless compression)"
+jump3r,beethoven,"Live recording of Beethoven’s No. 9 (op. 125): 
+https://musicbrainz.org/recording/7919a39b-2660-4ee4-b826-3fa05066acfe"
+jump3r,speech,"https://www.voiptroubleshooter.com/open_speech/british.html 
+
+Human speech of the “Harvard Sentences”, combined into one file"
+dconvert,jpeg_large,https://upload.wikimedia.org/wikipedia/commons/f/ff/Pizigani_1367_Chart_10MB.jpg
+dconvert,jpeg_medium,https://wallpapers.com/images/file/perfect-sunset-landscape-jd53jyxh63erpsje.jpg
+dconvert,jpeg_small,https://upload.wikimedia.org/wikipedia/commons/3/3f/JPEG_example_flower.jpg
+dconvert,png_medium,https://images.pexels.com/photos/92628/pexels-photo-92628.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1
+dconvert,png_small,https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png
+dconvert,png_large,"https://stsci-opo.org/STScI-01EVSVZKGDZB5XZ4PYAZCQKVJK.png
+(hubble legacy field)"
+dconvert,svg_medium,https://upload.wikimedia.org/wikipedia/commons/c/c1/Propane_flame_contours-en.svg
+dconvert,svg_large,https://upload.wikimedia.org/wikipedia/commons/2/23/Koppen-Geiger_Map_A_present.svg
+dconvert,svg_small,https://upload.wikimedia.org/wikipedia/commons/b/b8/Vw_kaefer_1966.svg
+dconvert,psd_small,https://customerscanvas.com/help/designers-manual/adobe/photoshop/files/rich-text.psd
+dconvert,psd_medium,https://www.graphberry.com/products/download/mint-minimal-portfolio-psd-template
+dconvert,psd_large,https://www.freepik.com/free-psd/photo-frames-mockup_3384645.htm
+batik,cranium,https://upload.wikimedia.org/wikipedia/commons/7/7e/Cranium_color.svg
+batik,corona,https://upload.wikimedia.org/wikipedia/commons/3/3b/201904_Virus.svg
+batik,cubus,https://mathworld.wolfram.com/images/eps-svg/MengerSponge2_400.svg
+batik,flame,https://upload.wikimedia.org/wikipedia/commons/c/c1/Propane_flame_contours-en.svg
+batik,france,https://upload.wikimedia.org/wikipedia/commons/4/47/France_-_OSM_Mapnik.svg
+batik,frisco,https://upload.wikimedia.org/wikipedia/commons/a/a0/Location_map_San_Francisco_Bay_Area.svg
+batik,jelly,"https://pxhere.com/en/photo/1125980 
+Embedded in SVG"
+batik,karte,https://upload.wikimedia.org/wikipedia/commons/2/23/Koppen-Geiger_Map_A_present.svg
+batik,mandelbrot,https://upload.wikimedia.org/wikipedia/commons/d/dc/Mandelbrot_set%2C_plotted_with_Matplotlib.svg
+batik,strawberry,https://freesvg.org/download/104363
+batik,village,https://freesvg.org/download/104429
+z3,QF_UF_PEQ018_size6.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_UF/-/raw/master/PEQ/PEQ018_size6.smt2
+z3,QF_UFLIA_xs_23_43.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_UFLIA/-/raw/develop-2021/wisas/xs_23_43.smt2
+z3,QF_RDL_orb08_888.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_RDL/-/raw/master/scheduling/orb08_888.smt2
+z3,QF_LRA_clocksynchro_7clocks.worst_case_skew.induct.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_LRA/-/raw/develop/clock_synchro/clocksynchro_2clocks.worst_case_skew.induct.smt2
+z3,QF_LIA_tightrhombus-283-245-3.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_LIA/-/raw/master/tightrhombus/tightrhombus-283-245-3.smt2
+z3,QF_AUFBV_891_sqlite3.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_AUFBV/-/raw/master/20210301-Alive2-partial-undef/sqlite3/891_sqlite3.smt2
+z3,LRA_formula_277.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/LRA/-/raw/master/2010-Monniaux-QE/mjollnir2/formula_277.smt2
+z3,AUFNIRA_z3.637557.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/AUFNIRA/-/raw/master/FFT/z3.637557.smt2
+z3,QF_BV_bench_935.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_BV/-/raw/master/sage/app1/bench_935.smt2
+z3,QF_BV_bench_3176.smt2,https://clc-gitlab.cs.uiowa.edu:2443/SMT-LIB-benchmarks/QF_BV/-/raw/master/sage/app9/bench_3176.smt2
+x264,,https://media.xiph.org/video/derf/y4m/blue_sky_1080p25.y4m
+x264,,https://media.xiph.org/video/derf/y4m/in_to_tree_444_720p50.y4m
+x264,,https://media.xiph.org/video/derf/y4m/Johnny_1280x720_60.y4m
+x264,,https://media.xiph.org/video/derf/ElFuente/Netflix_Crosswalk_4096x2160_60fps_10bit_420.y4m
+x264,,https://media.xiph.org/video/derf/y4m/pedestrian_area_1080p25.y4m
+x264,,https://media.xiph.org/video/derf/y4m/riverbed_1080p25.y4m
+x264,,https://media.xiph.org/video/derf/y4m/bridge_close_cif.y4m
+x264,,https://media.xiph.org/video/derf/y4m/city_4cif.y4m
+x264,,https://media.xiph.org/video/derf/y4m/crew_cif.y4m
+x264,,https://media.xiph.org/video/derf/y4m/sintel_trailer_2k_720p24.y4m
+"xz, lrzip and kanzi",ambivert,"https://www.free-stock-music.com/fsm-team-escp-ambivert.html 
+
+Title: “Ambivert”
+Artist: FSM Team & <escp>"
+"xz, lrzip and kanzi",artificl,"https://corpus.canterbury.ac.nz/descriptions/#artificl 
+Corpus with little or no repetition etc."
+"xz, lrzip and kanzi",deepfield,"https://hubblesite.org/contents/media/images/1996/01/388-Image.html and
+https://stsci-opo.org/STScI-01EVTAT7291D1ETQJ1BD5H2BRT.tif"
+"xz, lrzip and kanzi",enwik8,English Wikiopedia dump - http://www.mattmahoney.net/dc/textdata.html
+"xz, lrzip and kanzi",fannie_mae_500k,"https://www.kaggle.com/saravananselvamohan/freddie-mac-singlefamily-loanlevel-dataset 
+Loan-level dataset from Freddie Mac"
+"xz, lrzip and kanzi",large,"“The Large Corpus” - https://corpus.canterbury.ac.nz/descriptions/#large 
+(genome of E.coli, the bible and The CIA world factbook)"
+"xz, lrzip and kanzi",misc,The first million digits of pi - https://corpus.canterbury.ac.nz/descriptions/#misc
+"xz, lrzip and kanzi",silesia,"https://sun.aei.polsl.pl//~sdeor/index.php?page=silesia or
+http://www.mattmahoney.net/dc/silesia.zip (mirror)
+
+Silesia corpus for evaluating data compression algorithms"
+"xz, lrzip and kanzi",vmlinux,(self-compiled Linux kernel image)
+xz and lrzip,"uiq2-{4,8,16,32}",Random data (noise) generated with http://mattmahoney.net/dc/uiq/
