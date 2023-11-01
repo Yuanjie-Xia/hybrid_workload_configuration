@@ -1,4 +1,4 @@
-from itertools import chain, combinations
+from itertools import chain, combinations, product
 
 
 def powerset(list_name):
@@ -10,22 +10,30 @@ def generate_config_jump3r():
     config_option = []
     all_possible_configs = []
     configs = []
-    all_combination = powerset(configs)
-    for x in all_combination:
-        if len(x) > 0:
-            cmd = ''
-            for item in x:
-                cmd += item
-            config_option.append(cmd)
-    for a1 in range(0, 2):
-        for a2 in range(0, 2):
-            for a3 in range(0, 2):
-                for a4 in range(0, 2):
-                    for a5 in range(0, 2):
-                        for a6 in range(0, 2):
-                            for a7 in range(0, 2):
-                                for a8 in range(0, 2):
-                                    for a9 in range(0, 2):
-                                        all_possible_configs.append([a1, a2, a3, a4, a5, a6, a7, a8, a9])
-    all_possible_configs.remove([0]*9)
+    lowpass = ["--lowpass 5000", "--lowpass 10000", "--lowpass 20000"]
+    lowpass_width = ["", "--lowpass-width 1000", "--lowpass-width 2000"]
+    highpass = ["--highpass 20000", "--highpass 25000", "--highpass 30000"]
+    highpass_wide = ["", "--highpass-width 1000", "--highpass-width 2000"]
+    cbr = ["-b 8", "-b 160", "-b 320"]
+    abr = ["--abr 8", "--abr 160", "--abr 320"]
+    vbr = ["-V 0", "-V 4", "-V 9"]
+    resample = ["--resample 8", "--resample 22", "--resample 44", "--resample 48"]
+    replay = ["--replaygain-fast", "--replaygain-accurate", "--noreplaygain"]
+    # Create a list of all your lists
+    lists = [lowpass, lowpass_width, highpass, highpass_wide, cbr, abr, vbr, resample, replay]
+
+    # Get all combinations using itertools.product
+    all_combinations = list(product(*lists))
+
+    # Merge the combinations into one string with " " as a delimiter
+    merged_combinations = [" ".join(map(str, combo)) for combo in all_combinations]
+    # Print the combinations
+    for combo in merged_combinations:
+        print(combo)
+        break
+    print(len(merged_combinations))
     return config_option, all_possible_configs
+
+
+if __name__ == "__main__":
+    generate_config_jump3r()
