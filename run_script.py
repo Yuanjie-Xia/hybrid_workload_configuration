@@ -3,7 +3,7 @@ import os
 import subprocess
 import time
 import datetime
-import tqdm
+from tqdm import tqdm
 
 import sys
 from subject_testing import generate_config_jump3r, generate_command_jump3r
@@ -13,11 +13,11 @@ def main():
     combinations = generate_config_jump3r()
     command_list = generate_command_jump3r(combinations, "./music_encorder_test_set")
 
-    for i in range(10):
+    for i in range(5):
         df = []
         # directory = os.getcwd()
         # print(directory)
-        for command in tqdm(command_list):
+        for command in tqdm(command_list,desc="Executing commands"):
             p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE).communicate()[1].decode("utf-8")
             perf_info = p.split(" ")
