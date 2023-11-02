@@ -3,6 +3,7 @@ import os
 import subprocess
 import time
 import datetime
+import tqdm
 
 import sys
 from subject_testing import generate_config_jump3r, generate_command_jump3r
@@ -16,19 +17,19 @@ def main():
         df = []
         # directory = os.getcwd()
         # print(directory)
-        for command in command_list:
+        for command in tqdm(command_list):
             p = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE,
-                                 stderr=subprocess.PIPE).communicate()[0]
-            print(p)
-            perf_info = p.split("\n")[-1]
-            perf_info_element = perf_info.split(" ")
-            operation_time = perf_info_element[-8]
-            user_time = perf_info_element[-6]
-            system = perf_info_element[-4]
-            cpu = perf_info_element[-2]
-            df.append([command, operation_time, user_time, system, cpu])
-
-        running_time_df = pd.DataFrame(df, columns=["command", "operation_time", "user_time", "system", "cpu"])
+                                 stderr=subprocess.PIPE).communicate()[1].decode("utf-8")
+            perf_info = p.split(" ")
+            user_time = perf_info[0]
+            system = perf_info[1]
+            elapsed = perf_info[2]
+            cpu = perf_info[3]
+            IO = perf_info[5]
+            pagefaults = perf_info[6]
+            swaps = perf_info[7]
+            df.append([command, user_time, system, elapsed, cpu, IO, pagefaults, swaps, i])
+        running_time_df = pd.DataFrame(df, columns=["command", "user_time", "system", "elapsed", "cpu", "IO", "pagefaults", "swaps", "times"])
         running_time_df.to_csv("running_time" + str(i) + ".csv")
 
 

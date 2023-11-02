@@ -17,9 +17,9 @@ def powerset(list_name):
 
 def generate_config_jump3r():
     lowpass = ["--lowpass 5000", "--lowpass 10000", "--lowpass 20000"]
-    lowpass_width = ["", "--lowpass-width 1000", "--lowpass-width 2000"]
+    lowpass_width = ["--lowpass-width 1000", "--lowpass-width 2000"]
     highpass = ["--highpass 20000", "--highpass 25000", "--highpass 30000"]
-    highpass_wide = ["", "--highpass-width 1000", "--highpass-width 2000"]
+    highpass_wide = ["--highpass-width 1000", "--highpass-width 2000"]
     cbr = ["-b 8", "-b 160", "-b 320"]
     abr = ["--abr 8", "--abr 160", "--abr 320"]
     vbr = ["-V 0", "-V 4", "-V 9"]
