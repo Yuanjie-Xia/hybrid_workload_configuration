@@ -23,8 +23,7 @@ def get_workload_feature(media_file_path):
             duration = track.duration
             Bitrate = track.bit_rate
             Codec = track.codec_id
-            sample_rate = track.sample_rate
-            feature_list = [duration, Bitrate, Codec, sample_rate]
+            feature_list = [duration, Bitrate, Codec]
 
     return feature_list
 
