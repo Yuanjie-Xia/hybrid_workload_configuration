@@ -38,12 +38,14 @@ def main():
         ext = file_addr.split('.')[-1]
         feature_list = get_workload_feature(file_addr)
         feature_list.append(ext)
+        feature_list.append(file_addr)
         print(feature_list)
         workload_feature_set.append(feature_list)
     csv_file = "workload.csv"
     # Write the list to a CSV file
     with open(csv_file, mode="w", newline="") as file:
         writer = csv.writer(file)
+        writer.writerow(["duration", "Bitrate", "Codec", "ext", "file_name"])
         for row in workload_feature_set:
             writer.writerow(row)
 
