@@ -29,9 +29,10 @@ def generate_config_jump3r():
     lists = [lowpass, lowpass_width, highpass, highpass_wide, cbr, abr, vbr, resample, replay]
     # Get all combinations using itertools.product
     all_combinations = list(product(*lists))
+
     # Merge the combinations into one string with " " as a delimiter
     merged_combinations = [" ".join(map(str, combo)) for combo in all_combinations]
-    return merged_combinations
+    return merged_combinations, all_combinations
 
 
 def generate_command_jump3r(combinations, root_dir):
@@ -46,5 +47,5 @@ def generate_command_jump3r(combinations, root_dir):
 
 
 if __name__ == "__main__":
-    combinations = generate_config_jump3r()
+    combinations, _ = generate_config_jump3r()
     command_list = generate_command_jump3r(combinations, "./music_encorder_test_set")
