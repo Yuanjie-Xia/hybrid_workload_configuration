@@ -1,114 +1,11 @@
-import statistics
-
+# -*- coding: utf-8 -*-
 import numpy as np
-import pandas as pd
-import xgboost as xgb
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-
-from subject_testing import generate_config_jump3r
-
+#import matplotlib.pyplot as plt
 from numpy import genfromtxt
-from deepPerf.mlp_sparse_model import MLPSparseModel
-from deepPerf.mlp_plain_model import MLPPlainModel
+from mlp_sparse_model import MLPSparseModel
+from mlp_plain_model import MLPPlainModel
 import time
 import argparse
-
-
-def load_results(results):
-    workload_set = pd.read_csv('workload.csv')
-    config_set, all_combination = generate_config_jump3r()
-    user_time = results['user_time']
-    commands = results['command']
-    replay_mapping = {
-            "--replaygain-fast": [1, 0, 0],
-            "--replaygain-accurate": [0, 1, 0],
-            "--noreplaygain": [0, 0, 1]
-        }
-
-    ext_set = {
-            "wav": [1, 0, 0, 0],
-            "mp3": [0, 1, 0, 0],
-            "opus": [0, 0, 1, 0],
-            "flac": [0, 0, 0, 1]
-        }
-
-    digital_config = []
-    for command in commands:
-        command_element = command.split(' ')
-        numeric_elements = [int(element) for element in command_element if element.isnumeric() or (element.replace(".", "", 1).isdigit() and element.count(".") <= 1)]
-        numeric_elements += replay_mapping[command_element[20]]
-        file_name = command_element[-2].split('/')[-1]
-        if file_name == ".DS_Store":
-            digital_config.append([])
-            continue
-        workload_data = workload_set[workload_set['file_name'].str.contains(file_name)].values.tolist()[0]
-        numeric_elements += workload_data[0:3]
-        numeric_elements += ext_set[workload_data[3]]
-        digital_config.append(numeric_elements)
-
-    user_time_list = []
-    for i, element in enumerate(user_time):
-        if element.endswith("user"):
-            element = float(element.replace('user', ''))
-            config = digital_config[i]
-            config += [element]
-            user_time_list.append(config)
-    df_merge = pd.DataFrame(user_time_list)
-    df_merge = df_merge.fillna(0)
-    df_merge = df_merge.loc[:, (df_merge != 0).any()]
-    return df_merge
-
-
-def preprocessing(df_merge):
-    scaler = MinMaxScaler()
-    # Fit the scaler to your data and transform it
-    scaled_data = scaler.fit_transform(df_merge)
-    # Create a new DataFrame with the scaled values
-    scaled_df_merge = pd.DataFrame(scaled_data, columns=df_merge.columns)
-    scaled_df_merge = scaled_df_merge.iloc[:, :-1]
-    # Merge df1_dropped with df2
-    scaled_df_merge = pd.concat([scaled_df_merge, df_merge.iloc[:, -1]], axis=1)
-    return scaled_df_merge
-
-
-def simply_merge(scaled_df_merge, num):
-    print("------------------------")
-    print(num)
-    X = scaled_df_merge.iloc[:, :-1]  # Features (all columns except the last one)
-    y = scaled_df_merge.iloc[:, -1]   # Target variable (last column)
-
-    train_size = X.shape[1]
-    train_ratio = float(train_size/X.shape[0])
-    # Step 4: Split the data into training and testing sets
-
-    for n in range(1, 7):
-        error_set = []
-        for k in range(1, 10):
-            X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=(1-n*train_ratio), random_state=42+k)
-
-            # Step 5: Train an XGBoost model
-            model = xgb.XGBRegressor()
-            model.fit(X_train, y_train)
-
-            # Make predictions on the test set
-            y_pred = model.predict(X_test)
-
-            # Calculate the Variance of the actual target values
-            variance_y = np.var(y_test)
-
-            # Calculate the Relative Squared Error (RSE) for each prediction
-            r_error_list = []
-            for i in range(len(y_test)):
-                r_error = abs(y_pred-y_test)/y_test
-                r_error_list.append(r_error)
-
-            # Calculate the Median RSE
-            mre = np.median(r_error_list)
-            #print("Relative Mean Squared Error: {:.4f}".format(np.mean(rse)))
-            error_set.append(mre)
-        print(statistics.mean(error_set))
-        print("_______________________")
 
 
 def nn_l1_val(X_train1, Y_train1, X_train2, Y_train2, n_layer, lambd, lr_initial):
@@ -144,11 +41,90 @@ def nn_l1_val(X_train1, Y_train1, X_train2, Y_train2, n_layer, lambd, lr_initial
     return abs_error, rel_error
 
 
+def system_samplesize(sys_name):
+    if (sys_name == 'Apache'):
+        N_train_all = np.multiply(9, [1, 2, 3, 4, 5])  # This is for Apache
+    elif (sys_name == 'BDBJ'):
+        N_train_all = np.multiply(26, [1, 2, 3, 4, 5])  # This is for BDBJ
+    elif (sys_name == 'BDBC'):
+        N_train_all = np.multiply(18, [1, 2, 3, 4, 5])  # This is for BDBC
+    elif (sys_name == 'LLVM'):
+        N_train_all = np.multiply(11, [1, 2, 3, 4, 5])  # This is for LLVM
+    elif (sys_name == 'SQL'):
+        N_train_all = np.multiply(39, [1, 2, 3, 4, 5])  # This is for SQL
+    elif (sys_name == 'x264'):
+        N_train_all = np.multiply(16, [1, 2, 3, 4, 5])  # This is for X264
+    elif (sys_name == 'Dune'):
+        N_train_all = np.asarray([49, 78, 240, 375])  # This is for Dune
+    elif (sys_name == 'hipacc'):
+        N_train_all = np.asarray([261, 736, 528, 1281])  # This is for hipacc
+    elif (sys_name == 'hsmgp'):
+        N_train_all = np.asarray([77, 173, 384, 480])  # This is for hsmgp
+    elif (sys_name == 'javagc'):
+        N_train_all = np.asarray([423, 534, 855, 2571])  # This is for javagc
+    elif (sys_name == 'sac'):
+        N_train_all = np.asarray([2060, 2295, 2499, 3261])  # This is for sac
+    else:
+        raise AssertionError("Unexpected value of 'sys_name'!")
+
+    return N_train_all
+
+
+def seed_generator(sys_name, sample_size):
+    # Generate the initial seed for each sample size (to match the seed
+    # of the results in the paper)
+    # This is just the initial seed, for each experiment, the seeds will be
+    # equal the initial seed + the number of the experiment
+
+    N_train_all = system_samplesize(sys_name)
+    if sample_size in N_train_all:
+        seed_o = np.where(N_train_all == sample_size)[0][0]
+    else:
+        seed_o = np.random.randint(1, 101)
+
+    return seed_o
+
+
 # Main function
-def deepPerf(whole_data_df, exp_num):
-    whole_data = whole_data_df.values
+if __name__ == '__main__':
+
+    # Get system name from the arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("system_name",
+                        help="name of system to be evaluated: Apache, LLVM, x264, BDBC, BDBJ, SQL, Dune, hipacc, hsmgp, javagc, sac",
+                        type=str)
+    parser.add_argument("-ne", "--number_experiment",
+                        help="number of experiments per sample size (integer)",
+                        type=int)
+    parser.add_argument("-ss", "--sample_size",
+                        help="sample size to be evaluated (integer)",
+                        type=int)
+    args = parser.parse_args()
+
+    # System to be evaluated:
+    sys_name = args.system_name
+    print(sys_name)
+
+    # Number of experiments per sample size
+    if args.number_experiment is not None:
+        n_exp = int(args.number_experiment)
+    else:
+        n_exp = 30
+
+    # The sample size to be evaluated
+    if args.sample_size is not None:
+        sample_size_all = []
+        sample_size_all.append(int(args.sample_size))
+    else:
+        sample_size_all = list(system_samplesize(sys_name))
+
+    # Read and extract data
+    print('Read whole dataset from csv file ...')
+    dir_data = 'Data/' + sys_name + '_AllNumeric.csv'
+    print('Dataset: ' + dir_data)
+    whole_data = genfromtxt(dir_data, delimiter=',', skip_header=1)
     (N, n) = whole_data.shape
-    n = n - 1
+    n = n-1
 
     X_all = whole_data[:, 0:n]
     Y_all = whole_data[:, n][:, np.newaxis]
@@ -157,14 +133,17 @@ def deepPerf(whole_data_df, exp_num):
     result_sys = []
     len_count = 0
 
-    train_size = X_all.shape[1]
-    sample_size_all = [i * train_size for i in range(1, 7)]
-
     # Sample sizes need to be investigated
     for idx in range(len(sample_size_all)):
 
         N_train = sample_size_all[idx]
         print("Sample size: {}".format(N_train))
+
+        if (N_train >= N):
+            raise AssertionError("Sample size can't be larger than whole data")
+
+        # Get the initial seed
+        seed_init = seed_generator(sys_name, N_train)
 
         rel_error_mean = []
         lambda_all = []
@@ -175,14 +154,14 @@ def deepPerf(whole_data_df, exp_num):
         lr_all = []
         abs_error_layer_lr_all = []
         time_all = []
-        for m in range(1, 10):
+        for m in range(1, n_exp+1):
             print("Experiment: {}".format(m))
 
             # Start measure time
             start = time.time()
 
             # Set seed and generate training data
-            seed = 42 + m
+            seed = seed_init*n_exp + m
             np.random.seed(seed)
             permutation = np.random.permutation(N)
             training_index = permutation[0:N_train]
@@ -359,6 +338,7 @@ def deepPerf(whole_data_df, exp_num):
         result["lr_all"] = lr_all
         result["abs_error_layer_lr_all"] = abs_error_layer_lr_all
         result["rel_error_mean"] = rel_error_mean
+        result["dir_data"] = dir_data
         result["error_min_all"] = error_min_all
         result["rel_error_min_all"] = rel_error_min_all
         result["training_index"] = training_index_all
@@ -378,33 +358,50 @@ def deepPerf(whole_data_df, exp_num):
 
         result_arr = np.asarray(result)
 
-        print('Finish experimenting for system with sample size {}.'.format(N_train))
+        print('Finish experimenting for system {} with sample size {}.'.format(sys_name, N_train))
 
-        print('Mean prediction relative error (%) is: {:.2f}, Margin (%) is: {:.2f}'.format(np.mean(rel_error_mean), ci_temp))
+        print('Mean prediction relative error (%) is: {:.2f}, Margin (%) is: {:.2f}'.format(np.mean(rel_error_mean), ci_temp))        
 
         # Save the result statistics to a csv file after each sample
         # Save the raw results to an .npy file
         print('Save results to the current directory ...')
 
-        filename = 'result_' + str(exp_num) + '.csv'
+        filename = 'result_' + sys_name + '.csv'
         np.savetxt(filename, result_arr, fmt="%f", delimiter=",",
                    header="Sample size, Mean, Margin")
         print('Save the statistics to file ' + filename + ' ...')
 
-        filename = 'result_AutoML_veryrandom' + str(exp_num) + '.npy'
+        filename = 'result_' + sys_name + '_AutoML_veryrandom.npy'
         np.save(filename, result_sys)
         print('Save the raw results to file ' + filename + ' ...')
 
 
-def main():
-    for num in range(0, 3):
-        print(num)
-        results = pd.read_csv('jump3r_result/running_time' + str(num) + '.csv')
-        average_user_time = load_results(results)
-        scaled_df = preprocessing(average_user_time)
-        #simply_merge(scaled_df)
-        simply_merge(scaled_df, num)
+##Plot the performance predictions
+#plt.figure()
+#plt.plot(Y_test, 'r')
+#plt.plot(Y_pred_test, 'b')
+#plt.show()
 
 
-if __name__ == "__main__":
-    main()
+#plt.figure()
+#plt.plot(lambda_range, rel_error_min[0])
+#plt.plot(error_min[0])
+#
+#
+#plt.figure()
+#plt.plot(rel_error_min_all[0][0])
+
+
+## Load the raw result and compute the statistics 
+## Compute the statistics (mean and confidence interval)
+#result_temp = np.load('result_Apache_AutoML_veryrandom.npy').tolist()
+#for idx in range(5):
+#    rel_error_mean_temp = result_temp[idx]['rel_error_mean']
+#    N_train_temp = result_temp[idx]['N_train']
+#    print(N_train_temp)
+#    print(np.mean(rel_error_mean_temp))
+#
+#    sd_error_temp = np.sqrt(np.var(rel_error_mean_temp, ddof=1))
+#    ci_temp = 1.96*sd_error_temp/np.sqrt(len(rel_error_mean_temp))
+#
+#    print(ci_temp)
