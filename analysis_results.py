@@ -1,18 +1,47 @@
 import statistics
+import time
 
 import numpy as np
 import pandas as pd
+import torch
 import xgboost as xgb
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
+from deepPerf.mlp_plain_model import MLPPlainModel
+from deepPerf.mlp_sparse_model import MLPSparseModel
 from subject_testing import generate_config_jump3r
 
-from numpy import genfromtxt
-from deepPerf.mlp_sparse_model import MLPSparseModel
-from deepPerf.mlp_plain_model import MLPPlainModel
-import time
-import argparse
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, TensorDataset
+from sklearn.model_selection import train_test_split
+import pandas as pd
+
+
+class AttentionModel(nn.Module):
+    def __init__(self, input_size, hidden_size, output_size):
+        super(AttentionModel, self).__init__()
+        self.transformer = nn.TransformerEncoderLayer(
+            d_model=input_size,
+            nhead=4,  # Number of heads in the multiheadattention models
+        )
+        self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc2 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, x):
+        # Ensure the input is 3-dimensional (batch_size, sequence_length, input_size)
+        x = x.unsqueeze(1)
+        x = self.transformer(x)
+        # Assuming you want to use the output from the last layer for the linear layer
+        x = x[-1, :, :]
+
+        # Apply a dense layer with activation function
+        x = F.relu(self.fc1(x))
+        x = self.fc2(x)
+        return x
 
 
 def load_results(results):
@@ -72,6 +101,18 @@ def preprocessing(df_merge):
     return scaled_df_merge
 
 
+def relative_error(y_pred, y_test):
+    errors = []
+    for pred, actual in zip(y_pred, y_test):
+        if actual != 0:
+            error = abs(pred - actual) / abs(actual)
+            errors.append(error)
+        else:
+            # Handle the case where the actual value is zero to avoid division by zero
+            errors.append(float('inf'))  # Assigning infinity for the relative error
+    return errors
+
+
 def simply_merge(scaled_df_merge, num):
     print("------------------------")
     print(num)
@@ -97,14 +138,11 @@ def simply_merge(scaled_df_merge, num):
             # Calculate the Variance of the actual target values
             variance_y = np.var(y_test)
 
-            # Calculate the Relative Squared Error (RSE) for each prediction
-            r_error_list = []
-            for i in range(len(y_test)):
-                r_error = abs(y_pred-y_test)/y_test
-                r_error_list.append(r_error)
+            # Calculate the Relative Error (RE) for each prediction
+            r_error_list = relative_error(y_pred, y_test)
 
             # Calculate the Median RSE
-            mre = np.median(r_error_list)
+            mre = statistics.median(r_error_list)
             #print("Relative Mean Squared Error: {:.4f}".format(np.mean(rse)))
             error_set.append(mre)
         print(statistics.mean(error_set))
@@ -396,14 +434,83 @@ def deepPerf(whole_data_df, exp_num):
         print('Save the raw results to file ' + filename + ' ...')
 
 
+def median_relative_error(predictions, targets):
+    absolute_errors = torch.abs(predictions - targets)
+    relative_errors = absolute_errors / (torch.abs(targets) + 1e-8)
+    return torch.median(relative_errors).item()
+
+
+def focus_model(whole_data_df, exp_num):
+    # Extract features and target variable
+    X = whole_data_df.iloc[:, :-1].values
+    y = whole_data_df.iloc[:, -1].values.reshape(-1, 1)
+
+    # Convert to PyTorch tensors
+    X_tensor = torch.tensor(X, dtype=torch.float32).cuda()
+    y_tensor = torch.tensor(y, dtype=torch.float32).cuda()
+
+    train_size = X_tensor.shape[1]
+    train_ratio = float(train_size / X_tensor.shape[0])
+
+    for n in range(1, 7):
+        # Split the data into train and test sets
+        X_train, X_test, y_train, y_test = train_test_split(X_tensor, y_tensor, test_size=(1-n*train_ratio), random_state=42+exp_num)
+
+        # Create DataLoader for training and testing
+        train_dataset = TensorDataset(X_train, y_train)
+        test_dataset = TensorDataset(X_test, y_test)
+
+        batch_size = 64
+        train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+
+        # Instantiate the model, loss function, and optimizer
+        input_size = X.shape[1]
+        output_size = 1
+        hidden_size = 64  # Adjust as needed
+        model = AttentionModel(input_size, hidden_size, output_size).cuda()
+        criterion = nn.MSELoss()
+        optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+        # Training loop
+        num_epochs = 40
+
+        for epoch in range(num_epochs):
+            model.train()
+            for inputs, labels in train_loader:
+                optimizer.zero_grad()
+                outputs = model(inputs)
+                # Ensure labels have the same shape as outputs for each sample in the batch
+                labels = labels.unsqueeze(1).cuda()  # Add an extra dimension to match the output shape
+                loss = criterion(outputs, labels)
+                loss.backward()
+                optimizer.step()
+
+                # Validation
+                model.eval()
+                with torch.no_grad():
+                    predictions = torch.tensor([], dtype=torch.float32).cuda()
+                    targets = torch.tensor([], dtype=torch.float32).cuda()
+                    for inputs, labels in test_loader:
+                        outputs = model(inputs)
+                        # Ensure labels have the same shape as outputs for each sample in the batch
+                        labels = labels.unsqueeze(1).cuda()
+                        predictions = torch.cat((predictions, outputs), dim=0)
+                        targets = torch.cat((targets, labels), dim=0)
+
+                    median_relative_err = median_relative_error(predictions, targets)
+                    print(f'Epoch [{epoch + 1}/{num_epochs}], Median Relative Error: {median_relative_err:.4f}')
+
+
 def main():
     for num in range(0, 3):
         print(num)
         results = pd.read_csv('jump3r_result/running_time' + str(num) + '.csv')
         average_user_time = load_results(results)
+        print(average_user_time.shape)
         scaled_df = preprocessing(average_user_time)
-        #simply_merge(scaled_df)
-        simply_merge(scaled_df, num)
+        # simply_merge(scaled_df, num)
+        focus_model(scaled_df, num)
 
 
 if __name__ == "__main__":
