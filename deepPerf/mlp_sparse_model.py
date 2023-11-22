@@ -1,7 +1,6 @@
 import tensorflow as tf
 import numpy as np
-import sys
-from deepPerf.utils.general import init_dir, get_logger, random_mini_batches
+from method_implement.deepPerf import random_mini_batches
 
 
 def neural_net(tf_x, n_layer, n_neuron, lambd):

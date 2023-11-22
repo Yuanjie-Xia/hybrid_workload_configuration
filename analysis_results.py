@@ -3,7 +3,7 @@ import torch
 
 from sklearn.preprocessing import MinMaxScaler
 from subject_testing import generate_config_jump3r
-from simple_att import focus_model
+from method_implement.simple_att import focus_model
 
 
 def load_results(results):
