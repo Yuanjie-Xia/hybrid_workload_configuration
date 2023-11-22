@@ -1,9 +1,8 @@
 import pandas as pd
-import torch
-
 from sklearn.preprocessing import MinMaxScaler
+
+from method_implement.simple_att import focus_model
 from subject_testing import generate_config_jump3r
-from method_implement.mtad_gat import mtad_impl
 
 
 def load_results(results):
@@ -63,24 +62,6 @@ def preprocessing(df_merge):
     return scaled_df_merge
 
 
-def relative_error(y_pred, y_test):
-    errors = []
-    for pred, actual in zip(y_pred, y_test):
-        if actual != 0:
-            error = abs(pred - actual) / abs(actual)
-            errors.append(error)
-        else:
-            # Handle the case where the actual value is zero to avoid division by zero
-            errors.append(float('inf'))  # Assigning infinity for the relative error
-    return errors
-
-
-def median_relative_error(predictions, targets):
-    absolute_errors = torch.abs(predictions - targets)
-    relative_errors = absolute_errors / (torch.abs(targets) + 1e-8)
-    return torch.median(relative_errors).item()
-
-
 def main():
     for num in range(0, 3):
         print(num)
@@ -89,7 +70,7 @@ def main():
         print(average_user_time.shape)
         scaled_df = preprocessing(average_user_time)
         # simply_merge(scaled_df, num)
-        mtad_impl(scaled_df, num)
+        focus_model(scaled_df, num)
 
 
 if __name__ == "__main__":

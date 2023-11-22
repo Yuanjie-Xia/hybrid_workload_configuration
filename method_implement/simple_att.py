@@ -4,7 +4,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, TensorDataset
-from analysis_results import median_relative_error
+from error_calculation import median_relative_error
 
 
 class AttentionModel(nn.Module):
@@ -14,8 +14,12 @@ class AttentionModel(nn.Module):
             d_model=input_size,
             nhead=4,  # Number of heads in the multiheadattention models
         )
+
         self.fc1 = nn.Linear(input_size, hidden_size)
+        self.fc3 = nn.Linear(hidden_size, hidden_size)
+        self.fc4 = nn.Linear(hidden_size, hidden_size)
         self.fc2 = nn.Linear(hidden_size, output_size)
+        self.relu = nn.ReLU()
 
     def forward(self, x):
         # Ensure the input is 3-dimensional (batch_size, sequence_length, input_size)
@@ -50,14 +54,14 @@ def focus_model(whole_data_df, exp_num):
         train_dataset = TensorDataset(X_train, y_train)
         test_dataset = TensorDataset(X_test, y_test)
 
-        batch_size = 64
+        batch_size = 12
         train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
         test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
         # Instantiate the model, loss function, and optimizer
         input_size = X.shape[1]
         output_size = 1
-        hidden_size = 64  # Adjust as needed
+        hidden_size = 32  # Adjust as needed
         model = AttentionModel(input_size, hidden_size, output_size)
         criterion = nn.MSELoss()
         optimizer = optim.Adam(model.parameters(), lr=0.001)
