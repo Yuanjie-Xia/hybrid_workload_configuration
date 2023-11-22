@@ -1,11 +1,9 @@
 import json
 
-import torch
-import pandas as pd
 from tensorflow.python.ops.gen_experimental_dataset_ops import SlidingWindowDataset
 
 from eval_methods import *
-from utils import *
+from mtad_model.utils import *
 
 
 class Predictor:

@@ -9,7 +9,7 @@ class ConvLayer(nn.Module):
     :param kernel_size: size of kernel to use in the convolution operation
     """
 
-    def __init__(self, n_features, kernel_size=7):
+    def __init__(self, n_features, kernel_size=1):
         super(ConvLayer, self).__init__()
         self.padding = nn.ConstantPad1d((kernel_size - 1) // 2, 0.0)
         self.conv = nn.Conv1d(in_channels=n_features, out_channels=n_features, kernel_size=kernel_size)
@@ -114,7 +114,10 @@ class FeatureAttentionLayer(nn.Module):
         K = self.num_nodes
         blocks_repeating = v.repeat_interleave(K, dim=1)  # Left-side of the matrix
         blocks_alternating = v.repeat(1, K, 1)  # Right-side of the matrix
+        print(blocks_repeating.shape)
+        print(blocks_alternating.shape)
         combined = torch.cat((blocks_repeating, blocks_alternating), dim=2)  # (b, K*K, 2*window_size)
+        print(combined.shape)
 
         if self.use_gatv2:
             return combined.view(v.size(0), K, K, 2 * self.window_size)

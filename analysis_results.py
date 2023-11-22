@@ -3,7 +3,7 @@ import torch
 
 from sklearn.preprocessing import MinMaxScaler
 from subject_testing import generate_config_jump3r
-from method_implement.simple_att import focus_model
+from method_implement.mtad_gat import mtad_impl
 
 
 def load_results(results):
@@ -89,7 +89,7 @@ def main():
         print(average_user_time.shape)
         scaled_df = preprocessing(average_user_time)
         # simply_merge(scaled_df, num)
-        focus_model(scaled_df, num)
+        mtad_impl(scaled_df, num)
 
 
 if __name__ == "__main__":
