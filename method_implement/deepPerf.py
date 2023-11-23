@@ -45,7 +45,7 @@ def deepPerf(whole_data_df, exp_num):
     X_all = whole_data[:, 0:n]
     Y_all = whole_data[:, n][:, np.newaxis]
 
-    # Some variables to store results
+    # Some variables to store datasets
     result_sys = []
     len_count = 0
 
@@ -204,7 +204,7 @@ def deepPerf(whole_data_df, exp_num):
             print('Step 2: Tuning the l1 regularized hyperparameter ...')
             print('The optimal l1 regularizer: {:.4f}'.format(lambda_f))
 
-            # Store some useful results
+            # Store some useful datasets
             n_layer_all.append(n_layer_opt)
             lr_all.append(lr_opt)
             abs_error_layer_lr_all.append(abs_error_layer_lr)
@@ -275,8 +275,8 @@ def deepPerf(whole_data_df, exp_num):
         print('Mean prediction relative error (%) is: {:.2f}, Margin (%) is: {:.2f}'.format(np.mean(rel_error_mean), ci_temp))
 
         # Save the result statistics to a csv file after each sample
-        # Save the raw results to an .npy file
-        print('Save results to the current directory ...')
+        # Save the raw datasets to an .npy file
+        print('Save datasets to the current directory ...')
 
         filename = 'result_' + str(exp_num) + '.csv'
         np.savetxt(filename, result_arr, fmt="%f", delimiter=",",
@@ -285,4 +285,4 @@ def deepPerf(whole_data_df, exp_num):
 
         filename = 'result_AutoML_veryrandom' + str(exp_num) + '.npy'
         np.save(filename, result_sys)
-        print('Save the raw results to file ' + filename + ' ...')
+        print('Save the raw datasets to file ' + filename + ' ...')

@@ -72,7 +72,7 @@ def system_samplesize(sys_name):
 
 def seed_generator(sys_name, sample_size):
     # Generate the initial seed for each sample size (to match the seed
-    # of the results in the paper)
+    # of the datasets in the paper)
     # This is just the initial seed, for each experiment, the seeds will be
     # equal the initial seed + the number of the experiment
 
@@ -129,7 +129,7 @@ if __name__ == '__main__':
     X_all = whole_data[:, 0:n]
     Y_all = whole_data[:, n][:, np.newaxis]
 
-    # Some variables to store results
+    # Some variables to store datasets
     result_sys = []
     len_count = 0
 
@@ -291,7 +291,7 @@ if __name__ == '__main__':
             print('Step 2: Tuning the l1 regularized hyperparameter ...')
             print('The optimal l1 regularizer: {:.4f}'.format(lambda_f))
 
-            # Store some useful results
+            # Store some useful datasets
             n_layer_all.append(n_layer_opt)
             lr_all.append(lr_opt)
             abs_error_layer_lr_all.append(abs_error_layer_lr)
@@ -363,8 +363,8 @@ if __name__ == '__main__':
         print('Mean prediction relative error (%) is: {:.2f}, Margin (%) is: {:.2f}'.format(np.mean(rel_error_mean), ci_temp))        
 
         # Save the result statistics to a csv file after each sample
-        # Save the raw results to an .npy file
-        print('Save results to the current directory ...')
+        # Save the raw datasets to an .npy file
+        print('Save datasets to the current directory ...')
 
         filename = 'result_' + sys_name + '.csv'
         np.savetxt(filename, result_arr, fmt="%f", delimiter=",",
@@ -373,7 +373,7 @@ if __name__ == '__main__':
 
         filename = 'result_' + sys_name + '_AutoML_veryrandom.npy'
         np.save(filename, result_sys)
-        print('Save the raw results to file ' + filename + ' ...')
+        print('Save the raw datasets to file ' + filename + ' ...')
 
 
 ##Plot the performance predictions

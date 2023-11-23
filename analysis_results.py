@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from method_implement.simple_att import focus_model
+from method_implement.CNN import simple_cnn
 from subject_testing import generate_config_jump3r
 
 
@@ -69,9 +69,10 @@ def main():
         average_user_time = load_results(results)
         print(average_user_time.shape)
         scaled_df = preprocessing(average_user_time)
-        scaled_df.to_csv('jump3r_' + str(num) + '_AllNumeric.csv', index=False)
+        # scaled_df.to_csv('jump3r_' + str(num) + '_AllNumeric.csv', index=False)
         # simply_merge(scaled_df, num)
         # focus_model(scaled_df, num)
+        simple_cnn(scaled_df, num)
 
 
 if __name__ == "__main__":

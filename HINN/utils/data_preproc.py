@@ -46,7 +46,7 @@ def system_samplesize(sys_name):
 
 def seed_generator(sys_name, sample_size):
     """
-    Generate the initial seed for each sample size (to match the seed of the results in the paper)
+    Generate the initial seed for each sample size (to match the seed of the datasets in the paper)
     This is just the initial seed, for each experiment, the seeds will be equal the initial seed + the number of the experiment
 
     Args:

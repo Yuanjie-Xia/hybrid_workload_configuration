@@ -14,7 +14,7 @@ class MLPHierarchicalModel():
                 - num_block: [int] number of blocks in the network
                 - num_layer_pb: [int] number of layers in per block
                 - decay: [float] fraction to decay learning rate
-                - verbose: whether print the intermediate results
+                - verbose: whether print the intermediate datasets
         """
         self.input_dim = config['input_dim']
         self.num_neuron = config['num_neuron']

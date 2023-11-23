@@ -104,12 +104,12 @@ if __name__ == '__main__':
         print('Mean prediction relative error (%) is: {:.2f}, Margin (%) is: {:.2f}'.format(np.mean(rel_error_mean), ci_temp))
 
         # Save the result statistics to a csv file after each sample
-        # Save the raw results to an .npy file
-        print('Save results to the results directory ...')
-        filename = 'results/result_' + sys_name + '.csv'
+        # Save the raw datasets to an .npy file
+        print('Save datasets to the datasets directory ...')
+        filename = 'datasets/result_' + sys_name + '.csv'
         np.savetxt(filename, result_arr, fmt="%f", delimiter=",", header="Sample size, Mean, Margin")
         print('Save the statistics to file ' + filename + ' ...')
 
-        filename = 'results/result_' + sys_name + '_AutoML_veryrandom.npy'
+        filename = 'datasets/result_' + sys_name + '_AutoML_veryrandom.npy'
         np.save(filename, result_sys)
-        print('Save the raw results to file ' + filename + ' ...')
+        print('Save the raw datasets to file ' + filename + ' ...')
