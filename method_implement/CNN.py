@@ -67,14 +67,18 @@ def simple_cnn(scaled_df_merge, num):
             # Training loop
             epochs = 10
             for epoch in range(epochs):
+                model.train()  # Set the model to training mode
+                total_loss = 0
                 for inputs, targets in dataloader:
                     optimizer.zero_grad()
                     outputs = model(inputs.unsqueeze(1))  # Adding an extra dimension for the channel
-                    loss = criterion(outputs, targets)
+                    loss = criterion(outputs, targets.unsqueeze(1))  # Ensure targets have the same shape as outputs
                     loss.backward()
                     optimizer.step()
+                    total_loss += loss.item()
 
-                print(f'Epoch {epoch + 1}/{epochs}, Loss: {loss.item()}')
+                average_loss = total_loss / len(dataloader)
+                print(f'Training Epoch [{epoch + 1}/{epochs}], Loss: {average_loss:.4f}')
 
             test_dataset = CustomDataset(X_test, y_test)
             test_dataloader = DataLoader(test_dataset, batch_size=8, shuffle=False)
