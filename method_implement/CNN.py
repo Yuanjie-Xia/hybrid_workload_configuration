@@ -39,12 +39,14 @@ class SimpleCNN(nn.Module):
 
 
 def simple_cnn(scaled_df_merge, num):
+    # Check if GPU is available
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     X = torch.tensor(scaled_df_merge.iloc[:, :-1].values, dtype=torch.float32)
     y = torch.tensor(scaled_df_merge.iloc[:, -1].values, dtype=torch.float32)
 
     train_size = X.shape[1]
     train_ratio = float(train_size / X.shape[0])
-    # Step 4: Split the data into training and testing sets
 
     for n in range(1, 7):
         error_set = []
@@ -53,23 +55,27 @@ def simple_cnn(scaled_df_merge, num):
             print("Num of repeat experiments: " + str(k))
             X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=(1 - n * train_ratio),
                                                                 random_state=42 + k)
-            # input_channels = X_train.shape[1]
+
             y_train = y_train.view(-1, 1)
             y_test = y_test.view(-1, 1)
             dataset = CustomDataset(X_train, y_train)
             dataloader = DataLoader(dataset, batch_size=8, shuffle=True)
 
             # Initialize the model, loss function, and optimizer
-            model = SimpleCNN()
+            model = SimpleCNN().to(device)
             criterion = nn.MSELoss()  # Assuming it's a regression problem, adjust for classification
             optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+            # Move the model to GPU
+            model = model.to(device)
 
             # Training loop
             epochs = 10
             for epoch in range(epochs):
-                model.train()  # Set the model to training mode
+                model.train()
                 total_loss = 0
                 for inputs, targets in dataloader:
+                    inputs, targets = inputs.to(device), targets.to(device)  # Move inputs and targets to GPU
                     optimizer.zero_grad()
                     outputs = model(inputs.unsqueeze(1))
                     targets = targets.unsqueeze(1)
@@ -88,11 +94,11 @@ def simple_cnn(scaled_df_merge, num):
             model.eval()
             with torch.no_grad():
                 total_loss = 0
-                predictions = torch.tensor([], dtype=torch.float32)
-                targets = torch.tensor([], dtype=torch.float32)
+                predictions = torch.tensor([], dtype=torch.float32, device=device)
+                targets = torch.tensor([], dtype=torch.float32, device=device)
                 for inputs, labels in test_dataloader:
+                    inputs, labels = inputs.to(device), labels.to(device)  # Move inputs and labels to GPU
                     outputs = model(inputs.unsqueeze(1))
-                    # Ensure labels have the same shape as outputs for each sample in the batch
                     labels = labels.unsqueeze(1)
                     predictions = torch.cat((predictions, outputs), dim=0)
                     targets = torch.cat((targets, labels), dim=0)
@@ -100,6 +106,6 @@ def simple_cnn(scaled_df_merge, num):
 
                 average_loss = total_loss / len(test_dataloader)
                 print(f'Epoch [{epoch + 1}/{epochs}], Loss: {average_loss:.4f}')
-                median_relative_err = mean_relative_error(predictions, targets)
+                median_relative_err = mean_relative_error(predictions.cpu(), targets.cpu())
                 print(f'Epoch [{epoch + 1}/{epochs}], Median Relative Error: {median_relative_err:.4f}')
 
