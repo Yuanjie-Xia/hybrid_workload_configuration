@@ -40,3 +40,8 @@ def median_relative_error(predictions, targets):
     absolute_errors = torch.abs(predictions - targets)
     relative_errors = absolute_errors / (torch.abs(targets) + 1e-8)
     return torch.median(relative_errors).item()
+
+def mean_relative_error(predictions, targets):
+    absolute_errors = torch.abs(predictions - targets)
+    relative_errors = absolute_errors / (torch.abs(targets) + 1e-8)
+    return torch.mean(relative_errors).item()

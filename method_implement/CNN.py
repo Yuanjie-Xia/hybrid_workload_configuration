@@ -4,7 +4,7 @@ import torch.optim as optim
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from sklearn.model_selection import train_test_split
-from error_calculation import median_relative_error
+from error_calculation import mean_relative_error
 
 
 # Define a simple dataset
@@ -71,8 +71,9 @@ def simple_cnn(scaled_df_merge, num):
                 total_loss = 0
                 for inputs, targets in dataloader:
                     optimizer.zero_grad()
-                    outputs = model(inputs.unsqueeze(1))  # Adding an extra dimension for the channel
-                    loss = criterion(outputs, targets.unsqueeze(1))  # Ensure targets have the same shape as outputs
+                    outputs = model(inputs.unsqueeze(1))
+                    targets = targets.unsqueeze(1)
+                    loss = criterion(outputs, targets)
                     loss.backward()
                     optimizer.step()
                     total_loss += loss.item()
@@ -99,6 +100,6 @@ def simple_cnn(scaled_df_merge, num):
 
                 average_loss = total_loss / len(test_dataloader)
                 print(f'Epoch [{epoch + 1}/{epochs}], Loss: {average_loss:.4f}')
-                median_relative_err = median_relative_error(predictions, targets)
+                median_relative_err = mean_relative_error(predictions, targets)
                 print(f'Epoch [{epoch + 1}/{epochs}], Median Relative Error: {median_relative_err:.4f}')
 
