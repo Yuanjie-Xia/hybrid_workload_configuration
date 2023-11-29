@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from method_implement.CNN import simple_cnn
+from method_implement.ensemble_model import simple_ensemble
 from subject_testing import generate_config_jump3r
 
 
@@ -72,7 +72,7 @@ def main():
         # scaled_df.to_csv('jump3r_' + str(num) + '_AllNumeric.csv', index=False)
         # simply_merge(scaled_df, num)
         # focus_model(scaled_df, num)
-        simple_cnn(scaled_df, num)
+        simple_ensemble(scaled_df, num)
 
 
 if __name__ == "__main__":
