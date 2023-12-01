@@ -7,7 +7,7 @@ import tqdm
 import concurrent.futures  # Add this import
 
 import sys
-from subject_testing import generate_config_jump3r, generate_command_jump3r
+from jump3r_subject_testing import generate_config_jump3r, generate_command_jump3r
 
 
 def execute_command(command):

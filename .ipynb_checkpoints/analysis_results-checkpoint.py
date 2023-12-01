@@ -7,7 +7,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import MinMaxScaler
 
-from subject_testing import generate_config_jump3r
+from jump3r_subject_testing import generate_config_jump3r
 
 all_df_merge = []
 for num in range(0, 6):

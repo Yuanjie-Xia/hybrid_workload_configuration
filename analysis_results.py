@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
 from method_implement.ensemble_model import simple_ensemble
-from subject_testing import generate_config_jump3r
+from jump3r_subject_testing import generate_config_jump3r
 
 
 def load_results(results):
