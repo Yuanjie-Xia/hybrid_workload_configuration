@@ -15,18 +15,19 @@ def powerset(list_name):
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 
-def generate_config_jump3r():
-    lowpass = ["--lowpass 5000", "--lowpass 10000", "--lowpass 20000"]
-    lowpass_width = ["--lowpass-width 1000", "--lowpass-width 2000"]
-    highpass = ["--highpass 20000", "--highpass 25000", "--highpass 30000"]
-    highpass_wide = ["--highpass-width 1000", "--highpass-width 2000"]
-    cbr = ["-b 8", "-b 160", "-b 320"]
-    abr = ["--abr 8", "--abr 160", "--abr 320"]
-    vbr = ["-V 0", "-V 4", "-V 9"]
-    resample = ["--resample 8", "--resample 22", "--resample 44", "--resample 48"]
-    replay = ["--replaygain-fast", "--replaygain-accurate", "--noreplaygain"]
+def generate_config_x264():
+    asm = ['', '--no-asm ']
+    x8dct = ['', '--no-8x8dct ']
+    cabac = ['', '--no-cabac ']
+    deblock = ['', '--no-deblock ']
+    pskip = ['', '--no-fast-pskip ']
+    mbtree = ['', '--no-mbtree ']
+    mixed_refs = ['', '--no-mixed-refs ']
+    weightb = ['', '--no-weightb ']
+    rc_lookahead = ['--rc-lookahead 20 ', '--rc-lookahead 40 ']
+    ref = ['--ref 1 ', '--ref 5 ', '--ref 9 ']
     # Create a list of all your lists
-    lists = [lowpass, lowpass_width, highpass, highpass_wide, cbr, abr, vbr, resample, replay]
+    lists = [asm, x8dct, cabac, deblock, pskip, mbtree, mixed_refs, weightb, rc_lookahead, ref]
     # Get all combinations using itertools.product
     all_combinations = list(product(*lists))
 
@@ -35,14 +36,15 @@ def generate_config_jump3r():
     return merged_combinations, all_combinations
 
 
-def generate_command_jump3r(combinations, root_dir):
+def generate_command_x264(combinations, root_dir):
     command_list = []
     # Example usage:
     all_files = find_files(root_dir)
     for file in all_files:
-        for comb in combinations:
-            command = "time java -jar jump3r.jar " + comb + " " + file + " output.mp3"
-            command_list.append(command)
+        if ~file.startswith('.'):
+            for comb in combinations:
+                command = "../x264/x264 " + comb + " -o " + file + " output.mp3"
+                command_list.append(command)
     return command_list
 
 
