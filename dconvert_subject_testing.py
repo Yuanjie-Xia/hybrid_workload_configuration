@@ -36,7 +36,7 @@ def generate_config_x264():
     return merged_combinations, all_combinations
 
 
-def generate_command_x264(combinations, root_dir):
+def generate_command_dconvert(combinations, root_dir):
     command_list = []
     # Example usage:
     all_files = find_files(root_dir)
@@ -49,5 +49,5 @@ def generate_command_x264(combinations, root_dir):
 
 
 if __name__ == "__main__":
-    combinations, _ = generate_config_jump3r()
-    command_list = generate_command_jump3r(combinations, "./music_encorder_test_set")
+    combinations, _ = generate_command_dconvert()
+    command_list = generate_command_dconvert(combinations, "./music_encorder_test_set")
