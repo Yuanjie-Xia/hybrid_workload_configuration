@@ -15,19 +15,13 @@ def powerset(list_name):
     return chain.from_iterable(combinations(s, r) for r in range(len(s)+1))
 
 
-def generate_config_x264():
-    asm = ['', '--no-asm ']
-    x8dct = ['', '--no-8x8dct ']
-    cabac = ['', '--no-cabac ']
-    deblock = ['', '--no-deblock ']
-    pskip = ['', '--no-fast-pskip ']
-    mbtree = ['', '--no-mbtree ']
-    mixed_refs = ['', '--no-mixed-refs ']
-    weightb = ['', '--no-weightb ']
-    rc_lookahead = ['--rc-lookahead 20 ', '--rc-lookahead 40 ']
-    ref = ['--ref 1 ', '--ref 5 ', '--ref 9 ']
+def generate_config_dconvert():
+    platform = ['-androidMipmapInsteadOfDrawable ', '-androidIncludeLdpiTvdpi ', '-iosCreateImagesetFolders ']
+    compression = ['-low_compression ', '-high_compression ']
+    thread = ['-threads 1 ', '-threads 2 ', '-threads 3 ']
+    scale = ['-scale 10 ', '-scale 90 ']
     # Create a list of all your lists
-    lists = [asm, x8dct, cabac, deblock, pskip, mbtree, mixed_refs, weightb, rc_lookahead, ref]
+    lists = [platform, compression, thread, scale]
     # Get all combinations using itertools.product
     all_combinations = list(product(*lists))
 
@@ -43,7 +37,7 @@ def generate_command_dconvert(combinations, root_dir):
     for file in all_files:
         if ~file.startswith('.'):
             for comb in combinations:
-                command = "../x264/x264 " + comb + " -o " + file + " output.mp3"
+                command = ".java -jar ./dconvert.jar -src " + file + " -o " + file + " output.mp3"
                 command_list.append(command)
     return command_list
 
